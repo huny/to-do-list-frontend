@@ -1,0 +1,314 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-12 p-0">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+
+        <span class="navbar-brand">My To-Do-List Planner</span>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+          <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+          <ul class="navbar-nav">
+
+            <li class="nav-item">
+
+              <a class="nav-link" (click)="logout()">Logout</a>
+
+            </li>
+
+          </ul>
+
+          <button type="button" class="btn btn-outline-info" (click)="getAllLists(this.userId, this.userName)">My
+            Lists</button>
+          &nbsp;&nbsp;
+          <button type="button" class="btn btn-outline-info" (click)="undoAction()" title="Undo Previous Action">Undo
+            <i class="fa fa-undo"></i>
+          </button>
+
+        </div>
+
+      </nav>
+    </div>
+  </div>
+  <!-- <div class="container"> -->
+
+  <div class="row">
+
+    <div class="col-12 col-sm-4 col-md-4 col-lg-4 p-0">
+
+      <div class="nav-side-menu" style="height:700px; max-height: 700px; overflow: auto; position: relative;">
+        <div class="menu-text">
+          Welcome {{userInfo.firstName}} {{userInfo.lastName}}
+        </div>
+
+        <div class="accordion textCenter" id="accordionExample">
+          <div>
+            <div id="headingOne">
+              <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                  aria-expanded="true" aria-controls="collapseOne">
+                  People you may know
+                </button>
+              </h2>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <div class="card-body">
+                <ul class="list-group">
+                  <li class="list-group-item" *ngIf="nonFriendList.length <= 0">
+                    <div>
+                      No results
+                    </div>
+                  </li>
+                  <li class="list-group-item" *ngFor="let user of nonFriendList">
+                    <div>
+                      {{user.firstName}} {{user.lastName}}
+                      &nbsp;&nbsp;
+                      <button type="button" class="btn btn-info float-right" style="margin-right: 5px;"
+                        (click)="sendFriendRequest(user.userId, user.userName)">Add Friend</button>
+                    </div>
+                  </li>
+
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div id="headingTwo">
+              <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo"
+                  aria-expanded="false" aria-controls="collapseTwo">
+                  Friend Requests
+                </button>
+              </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+              <div class="card-body">
+                <ul class="list-group">
+                  <li class="list-group-item" *ngIf="friendRequests.length <= 0">
+                    <div>
+                      No Friend Requests
+                    </div>
+                  </li>
+                  <li class="list-group-item" *ngFor="let request of friendRequests">
+                    <div>
+                      {{request.requesterName}}
+
+                      <button type="button" class="btn btn-danger btnMenu float-right" style="margin-right: 5px;"
+                        (click)="rejectFriendRequest(request.requesterId)">Reject</button>
+
+                      <button type="button" class="btn btn-success btnMenu float-right" style="margin-right: 5px;"
+                        (click)="acceptFriendRequest(request.requesterId, request.requesterName)">Accept</button>
+                    </div>
+                  </li>
+
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div id="headingThree">
+              <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree"
+                  aria-expanded="false" aria-controls="collapseThree">
+                  Your Friends
+                </button>
+              </h2>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+              <div class="card-body">
+                <ul class="list-group">
+                  <li class="list-group-item" *ngIf="friendList.length <= 0">
+                    <div>
+                      No Friends
+                    </div>
+                  </li>
+                  <li class="list-group-item" *ngFor="let user of friendList">
+                    <div>
+                      {{user.name}}
+                      &nbsp;
+                      <button type="button" class="btn btn-info float-right" style="margin-right: 5px;"
+                        (click)="getAllLists(user.id, user.name)">View
+                        Lists</button>
+                    </div>
+                  </li>
+
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-12 col-sm-8 col-md-8 col-lg-8 p-0">
+
+      <div class="row p-0">
+        <div class="col-12 col-sm-6 col-md-6">
+          <h2 class="form-signin-heading" style="margin-top: 2px; margin-left: 5px;">{{listUserName}}'s To-Do Lists</h2>
+        </div>
+        <div class="col-12 col-sm-6 col-md-6">
+          <form class="form-inline" style="margin-top: 2px;">
+            <input class="form-control mr-sm-2" name="newListName" [(ngModel)]="newListName"
+              placeholder="Input List name">
+            <button type="button" class="btn btn-primary float-right" style="margin: 2px;"
+              (click)="createNewList();">Create New List</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="row p-5">
+        <div class="col-12 col-sm-12 col-md-12">
+          <div class="accordion textCenter" style="max-height:600px; overflow:auto;" id="accordionList">
+            <div *ngIf="toDoLists.length > 0; else noListBlock">
+              <div *ngFor="let list of toDoLists">
+                <div [attr.id]="'headingList' + list.listId">
+                  <h2 class="mb-0">
+                    <ul class="list-group">
+                      <li class="list-group-item">
+                        <span class="caret1" data-toggle="collapse" [attr.data-target]="'#collapseList' + list.listId"
+                          aria-expanded="true"
+                          [attr.aria-controls]="'#collapseList' + toDoLists.listId">{{list.listName}}</span>
+                        <div class="btn-group float-right" role="group" aria-label="...">
+                          <button type="button" class="btn btn-primary" title="Add Item to this List"
+                            (click)="viewAddItemModal(list.listId, list.listId)">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                          <button type="button" class="btn btn-danger" title="Delete this list"
+                            (click)="deleteList(list.listId)">
+                            <i class="fa fa-trash"></i>
+                          </button>
+                        </div>
+                      </li>
+                    </ul>
+                  </h2>
+                </div>
+
+                <div [attr.id]="'collapseList' + list.listId" class="collapse show"
+                  [attr.aria-labelledby]="'#headingList' + list.listId" data-parent="#accordionList">
+                  <div class="card-body">
+
+                    <ul *ngIf="list.toDoItems.length > 0; else elseBlock" class="list-group myUL"
+                      style="max-height: 500px; overflow:auto;">
+                      <ng-template #recursiveList let-toDoItems>
+                        <li *ngFor="let item of toDoItems" class="list-group-item">
+                          {{item.itemName}}
+                          <button type="button" class="btn btn-info" style="margin-left: 10px;"
+                            (click)="viewItemDetails(item, list)">View Details
+                          </button>
+
+                          <ul *ngIf="item.children !== null && item.children !== undefined && item.children.length > 0"
+                            class="list-group">
+                            <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.children }">
+                            </ng-container>
+                          </ul>
+                        </li>
+                      </ng-template>
+                      <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: list.toDoItems }">
+                      </ng-container>
+                    </ul>
+
+                    <ng-template #elseBlock>
+                      <li class="list-group-item">No To-Do Items</li>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-template #noListBlock>
+              <li class="list-group-item">No To-Do List found</li>
+            </ng-template>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!--end container-->
+
+<ngx-smart-modal #myModal identifier="myModal">
+  <div class="modal-header">
+    <h4>Item Details</h4>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <div *ngIf="myModal.hasData()">
+          <label for="item-name" class="col-form-label">Item Name: {{myModal.getData().item.itemName}}</label>
+          <input type="text" class="form-control" name="newItemName" [(ngModel)]="newItemName"
+            placeholder="Update Item Name" id="item-name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="message-text" class="col-form-label">Item State:</label>
+        <div *ngIf="myModal.hasData()">
+          <div *ngIf="myModal.getData().item.isCompleted; else openState;">
+            <input type="text" class="form-control" value="Done" disabled="true">
+          </div>
+
+          <ng-template #openState>
+            <input type="text" class="form-control" value="Open" disabled="true">
+          </ng-template>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="btn-group" role="group" aria-label="...">
+      <div *ngIf="myModal.hasData()">
+        <button *ngIf="myModal.getData().item.isCompleted === false" type="button" class="btn btn-success"
+          title="Mark this item as Done"
+          (click)="changeStatusOfItem(myModal.getData().item.itemId, (!(myModal.getData().item.isCompleted)))">
+          <i class="fa fa-check"></i>
+        </button>
+        <button *ngIf="myModal.getData().item.isCompleted" type="button" class="btn btn-dark"
+          title="Mark this item as Open"
+          (click)="changeStatusOfItem(myModal.getData().item.itemId, (!(myModal.getData().item.isCompleted)))">
+          <i class="fa fa-opera"></i>
+        </button>
+        <button type="button" class="btn btn-primary" title="Add Sub-Item to this item"
+          (click)="viewAddItemModal(myModal.getData().list.listId, myModal.getData().item.itemId)">
+          <i class="fa fa-plus"></i>
+        </button>
+        <button type="button" class="btn btn-secondary" title="Update this item"
+          (click)="editToDoItem(myModal.getData().item.itemId, myModal.getData().item.itemName)">
+          <i class="fa fa-edit"></i>
+        </button>
+        <button type="button" class="btn btn-danger" title="Delete This item"
+          (click)="deleteToDoItem(myModal.getData().item.itemId, myModal.getData().list.listId)">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</ngx-smart-modal>
+
+<ngx-smart-modal #addItemModal identifier="addItemModal">
+  <div class="modal-header">
+    <h4>Add a new To-Do Item</h4>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <input type="text" class="form-control" name="addItemName" [(ngModel)]="addItemName"
+          placeholder="Input Item Name" id="add-item-name">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div *ngIf="addItemModal.hasData()">
+      <button type="button" class="btn btn-primary"
+        (click)="addToDoItem(addItemModal.getData().listId, addItemModal.getData().parentId)">Add Item
+      </button>
+    </div>
+  </div>
+</ngx-smart-modal>
