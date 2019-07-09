@@ -184,7 +184,6 @@ export class ToDoListComponent implements OnInit {
 
     this.socketService.onReceivedRequest()
       .subscribe((request) => {
-        console.log(request)
         this.toastr.info(`${request.requesterName} sent you a friend request.`)
         this.getPeopleYouMayKnow();
         this.getAllFriendRequests();
@@ -390,7 +389,6 @@ export class ToDoListComponent implements OnInit {
     this.appService.deleteToDoItem(data)
       .subscribe((apiResponse) => {
         if (apiResponse.status === 200) {
-          console.log(apiResponse.data)
           this.toastr.success('Item deleted successfully');
           this.getAllLists(this.listUserId, this.listUserName);
           this.socketService.emitDeleteToDoItem(apiResponse.data, this.userId, this.userName);
@@ -455,7 +453,6 @@ export class ToDoListComponent implements OnInit {
       this.appService.undoAction(this.currentListId)
         .subscribe((apiResponse) => {
           if (apiResponse.status === 200) {
-            console.log(apiResponse.data)
             this.toastr.success('Previous Action has been undone');
             this.getAllLists(this.listUserId, this.listUserName);
             let details = {
@@ -513,7 +510,6 @@ export class ToDoListComponent implements OnInit {
       item: item,
       list: list
     }
-    console.log(modalData)
     this.ngxSmartModalService.resetModalData('myModal');
     this.ngxSmartModalService.setModalData(modalData, 'myModal');
     this.ngxSmartModalService.getModal('myModal').open();
@@ -526,7 +522,6 @@ export class ToDoListComponent implements OnInit {
       listId: listId,
       parentId: parentId
     }
-    console.log(modalData)
     this.ngxSmartModalService.resetModalData('addItemModal');
     this.ngxSmartModalService.setModalData(modalData, 'addItemModal');
     this.ngxSmartModalService.getModal('addItemModal').open();
